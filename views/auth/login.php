@@ -1,5 +1,6 @@
 <?php
 session_start();
+// Si ya está logueado, redirigir al dashboard
 if (isset($_SESSION['user_id'])) {
     header("Location: ../../index.php");
     exit();
@@ -7,132 +8,180 @@ if (isset($_SESSION['user_id'])) {
 ?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - El Rincón del Helado</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #FFD700 0%, #FF69B4 50%, #87CEEB 100%);
-        }
-        .login-card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        .login-header { text-align: center; margin-bottom: 30px; }
-        .login-header h1 { color: #FF69B4; font-size: 28px; }
-        .login-header p { color: #666; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
-        .form-control {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        .form-control:focus {
-            outline: none;
-            border-color: #FF69B4;
-        }
-        .btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #FF69B4 0%, #FFD700 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255,105,180,0.3);
-        }
-        .error-message {
-            background: #ff4444;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
-            display: none;
-        }
-    </style>
+    <title>El Rincón del Helado - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../assets/css/login.css">
 </head>
+
 <body>
-    <div class="login-card">
-        <div class="login-header">
-            <h1>🍦 El Rincón del Helado</h1>
-            <p>Sistema de Gestión</p>
+    <div id="bubbles"></div>
+
+    <div class="login-container">
+        <div class="login-wrapper">
+            <div class="login-info">
+                <div class="logo-icon">🍦</div>
+                <h1>El Rincón del Helado</h1>
+                <p>El sistema de gestión más completo para tu heladería. Controla ventas, inventario y clientes desde un solo lugar.</p>
+                <ul class="features">
+                    <li><i class="fas fa-chart-line"></i> Dashboard en tiempo real</li>
+                    <li><i class="fas fa-cash-register"></i> Punto de venta intuitivo</li>
+                    <li><i class="fas fa-boxes"></i> Control de inventario</li>
+                    <li><i class="fas fa-users"></i> Gestión de clientes</li>
+                    <li><i class="fas fa-chart-bar"></i> Reportes avanzados</li>
+                </ul>
+            </div>
+            <div class="login-form">
+                <div class="form-header">
+                    <h2>Bienvenido 👋</h2>
+                    <p>Ingresa tus credenciales para continuar</p>
+                </div>
+                <form id="loginForm">
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" placeholder="Correo electrónico" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" placeholder="Contraseña" required>
+                    </div>
+                    <button type="submit" class="btn-login" id="loginBtn">
+                        <i class="fas fa-arrow-right"></i> Iniciar Sesión
+                    </button>
+                </form>
+            </div>
         </div>
-        <div id="errorMessage" class="error-message"></div>
-        <form id="loginForm">
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="email" class="form-control" placeholder="admin@heladeria.com" required>
-            </div>
-            <div class="form-group">
-                <label>Contraseña</label>
-                <input type="password" id="password" class="form-control" placeholder="admin123" required>
-            </div>
-            <button type="submit" class="btn">Iniciar Sesión</button>
-        </form>
     </div>
+
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Mensaje</span>
+    </div>
+
     <script>
         // Credenciales válidas
         const USUARIOS = {
-            'admin@heladeria.com': { password: 'admin123', nombre: 'Administrador', rol: 'admin' },
-            'vendedor@heladeria.com': { password: 'vendedor123', nombre: 'Vendedor', rol: 'vendedor' }
+            'admin@heladeria.com': {
+                password: 'admin123',
+                nombre: 'Administrador',
+                rol: 'admin'
+            },
+            'vendedor@heladeria.com': {
+                password: 'vendedor123',
+                nombre: 'Vendedor',
+                rol: 'vendedor'
+            }
         };
-        
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
+
+        // Toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const icon = toast.querySelector('i');
+
+            toastMessage.textContent = message;
+            toast.classList.remove('error', 'success');
+            toast.classList.add(type);
+
+            if (type === 'error') {
+                icon.className = 'fas fa-exclamation-circle';
+            } else {
+                icon.className = 'fas fa-check-circle';
+            }
+
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Login form
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const errorDiv = document.getElementById('errorMessage');
-            
+            const btn = document.getElementById('loginBtn');
+
+            if (!email || !password) {
+                showToast('Por favor, completa todos los campos', 'error');
+                return;
+            }
+
+            // Mostrar loading
+            btn.classList.add('loading');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
+
             // Verificar credenciales
             if (USUARIOS[email] && USUARIOS[email].password === password) {
-                // Guardar sesión
-                const formData = new FormData();
-                formData.append('email', email);
-                formData.append('nombre', USUARIOS[email].nombre);
-                formData.append('rol', USUARIOS[email].rol);
-                
-                fetch('../../api/auth_local.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(() => {
-                    window.location.href = '../../index.php';
-                })
-                .catch(() => {
-                    window.location.href = '../../index.php';
-                });
+                try {
+                    // Enviar al servidor para crear la sesión PHP
+                    const response = await fetch('../../api/auth_local.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `email=${encodeURIComponent(email)}&nombre=${encodeURIComponent(USUARIOS[email].nombre)}&rol=${encodeURIComponent(USUARIOS[email].rol)}`
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showToast('¡Bienvenido ' + USUARIOS[email].nombre + '!', 'success');
+                        setTimeout(() => {
+                            window.location.href = '../../index.php';
+                        }, 500);
+                    } else {
+                        throw new Error('Error al crear sesión');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showToast('Error al iniciar sesión', 'error');
+                    btn.classList.remove('loading');
+                    btn.innerHTML = '<i class="fas fa-arrow-right"></i> Iniciar Sesión';
+                }
             } else {
-                errorDiv.style.display = 'block';
-                errorDiv.textContent = 'Email o contraseña incorrectos';
-                
+                btn.classList.remove('loading');
+                btn.innerHTML = '<i class="fas fa-arrow-right"></i> Iniciar Sesión';
+                showToast('Email o contraseña incorrectos', 'error');
+
+                // Efecto de shake
+                const form = document.querySelector('.login-form');
+                form.classList.add('shake');
                 setTimeout(() => {
-                    errorDiv.style.display = 'none';
-                }, 3000);
+                    form.classList.remove('shake');
+                }, 300);
             }
         });
+
+        // Enter key submit
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // Crear burbujas
+        function createBubbles() {
+            const bubblesContainer = document.getElementById('bubbles');
+            for (let i = 0; i < 30; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                const size = Math.random() * 60 + 20;
+                bubble.style.width = size + 'px';
+                bubble.style.height = size + 'px';
+                bubble.style.left = Math.random() * 100 + '%';
+                bubble.style.animationDuration = Math.random() * 5 + 5 + 's';
+                bubble.style.animationDelay = Math.random() * 5 + 's';
+                bubblesContainer.appendChild(bubble);
+            }
+        }
+        createBubbles();
     </script>
 </body>
+
 </html>

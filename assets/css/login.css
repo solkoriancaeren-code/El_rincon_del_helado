@@ -1,0 +1,332 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #FFD700 0%, #FF69B4 50%, #87CEEB 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Burbujas animadas */
+.bubble {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: float 8s infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh) scale(0);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.5;
+    }
+
+    90% {
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: translateY(-20vh) scale(1);
+        opacity: 0;
+    }
+}
+
+/* Contenedor principal */
+.login-container {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+}
+
+.login-wrapper {
+    display: flex;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Lado izquierdo - Información */
+.login-info {
+    flex: 1;
+    background: linear-gradient(135deg, #FF69B4, #FFD700);
+    padding: 50px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-info::before {
+    content: '🍦';
+    position: absolute;
+    font-size: 300px;
+    opacity: 0.1;
+    bottom: -50px;
+    right: -50px;
+    transform: rotate(-15deg);
+}
+
+.logo-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.login-info h1 {
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 15px;
+}
+
+.login-info p {
+    font-size: 18px;
+    opacity: 0.95;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.features {
+    list-style: none;
+    margin-top: 30px;
+}
+
+.features li {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+}
+
+.features li i {
+    width: 25px;
+    font-size: 20px;
+}
+
+/* Lado derecho - Formulario */
+.login-form {
+    flex: 1;
+    padding: 50px;
+    background: white;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.form-header h2 {
+    font-size: 32px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.form-header p {
+    color: #666;
+    font-size: 14px;
+}
+
+/* Inputs modernos */
+.input-group {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.input-group i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #FF69B4;
+    font-size: 18px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 15px 15px 15px 50px;
+    border: 2px solid #f0f0f0;
+    border-radius: 15px;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.3s;
+    background: #fafafa;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #FF69B4;
+    background: white;
+    box-shadow: 0 5px 15px rgba(255, 105, 180, 0.2);
+}
+
+/* Botón */
+.btn-login {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #FF69B4, #FFD700);
+    border: none;
+    border-radius: 15px;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(255, 105, 180, 0.4);
+}
+
+.btn-login:active {
+    transform: translateY(0);
+}
+
+/* Loading spinner */
+.btn-login.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.btn-login.loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid white;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+@keyframes spin {
+    to {
+        transform: translateY(-50%) rotate(360deg);
+    }
+}
+
+/* Toast notification */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #333;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transform: translateX(400px);
+    transition: transform 0.3s;
+    z-index: 1000;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.toast.show {
+    transform: translateX(0);
+}
+
+.toast.error {
+    background: #ff4444;
+}
+
+.toast.success {
+    background: #00C851;
+}
+
+/* Animación de shake */
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+.shake {
+    animation: shake 0.3s ease-in-out;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .login-wrapper {
+        flex-direction: column;
+    }
+
+    .login-info {
+        padding: 30px;
+        text-align: center;
+    }
+
+    .features {
+        text-align: left;
+    }
+
+    .login-form {
+        padding: 30px;
+    }
+
+    .login-info h1 {
+        font-size: 28px;
+    }
+}
