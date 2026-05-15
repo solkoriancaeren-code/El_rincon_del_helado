@@ -1,5 +1,5 @@
 <?php
 session_start();
 session_destroy();
-header("Location: /helado/views/auth/login.php");
+header("Location: views/auth/login.php");
 exit();
